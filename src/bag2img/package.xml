@@ -3,7 +3,7 @@
 <package format="3">
   <name>bag2img</name>
   <version>0.1.0</version>
-  <description>Export images from ROS 2 bag and video files at a fixed interval.</description>
+  <description>Convert images between ROS 2 bags, video files, and image files.</description>
   <maintainer email="user@example.com">thislifewon</maintainer>
   <license>MIT</license>
 

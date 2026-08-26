@@ -15,12 +15,13 @@ setup(
     zip_safe=True,
     maintainer="thislifewon",
     maintainer_email="user@example.com",
-    description="Export images from ROS 2 bag and video files at a fixed interval.",
+    description="Convert images between ROS 2 bags, video files, and image files.",
     license="MIT",
     entry_points={
         "console_scripts": [
             "bag2img = bag2img.bag_exporter:main",
             "video2img = bag2img.video_exporter:main",
+            "video2bag = bag2img.video_to_bag:main",
         ],
     },
 )

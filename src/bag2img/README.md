@@ -1,10 +1,12 @@
 # bag2img
 
-다음 두 개의 ROS 2 실행 파일을 제공합니다.
+다음 세 개의 ROS 2 실행 파일을 제공합니다.
 
 - `bag2img`: ROS 2 bag의 `sensor_msgs/msg/Image` 또는
   `sensor_msgs/msg/CompressedImage` 토픽을 일정 주기로 저장
 - `video2img`: MP4, AVI 등 OpenCV가 읽을 수 있는 동영상을 일정 주기로 저장
+- `video2bag`: 동영상의 모든 프레임을 ROS 2 bag의
+  원본 및 JPEG 압축 이미지 토픽으로 저장
 
 ## 빌드
 
@@ -49,3 +51,42 @@ ros2 run bag2img video2img \
 ```
 
 저장 파일명에는 순번과 입력 데이터 기준 timestamp(ns)가 포함됩니다.
+
+## 동영상을 ROS 2 bag으로 변환
+
+```bash
+ros2 run bag2img video2bag \
+  --video ~/Videos/input.mp4 \
+  --output-bag ~/bags/input_bag \
+  --topic /camera/image_raw \
+  --compressed-topic /camera/image_raw/compressed \
+  --frame-id camera
+```
+
+각 영상 프레임은 다음 두 토픽에 같은 타임스탬프로 기록됩니다.
+
+- `/camera/image_raw`: `bgr8` 인코딩의 `sensor_msgs/msg/Image`
+- `/camera/image_raw/compressed`: JPEG 형식의
+  `sensor_msgs/msg/CompressedImage`
+
+`--compressed-topic`을 생략하면 `<--topic 값>/compressed`를 사용합니다.
+JPEG 품질은 `--jpeg-quality`로 지정할 수 있으며 기본값은 95입니다.
+bag과 메시지 헤더의 타임스탬프는 변환 시작 시각부터 영상 FPS에 맞춰
+증가합니다. `--output-bag`을 생략하면 입력 영상 옆에 `<영상이름>_bag`
+디렉터리를 만듭니다. 기존 경로를 덮어쓰지 않으므로 출력 경로는 존재하지
+않아야 합니다.
+
+재현 가능한 타임스탬프가 필요하면 첫 프레임의 시각을 직접 지정할 수 있습니다.
+
+```bash
+ros2 run bag2img video2bag \
+  --video ~/Videos/input.mp4 \
+  --start-time-ns 0
+```
+
+생성 결과 확인:
+
+```bash
+ros2 bag info ~/bags/input_bag
+ros2 bag play ~/bags/input_bag
+```
