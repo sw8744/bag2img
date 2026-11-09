@@ -8,6 +8,18 @@ ros2 run bag2img bag2img \
   --output-dir ~/bag2img/bag_images
 ```
 
+## bag2video
+
+```bash
+ros2 run bag2img bag2video \
+  --bag testbag \
+  --topic /camera/raw/compressed \
+  --output-video ~/Videos/output.mp4
+```
+
+FPS는 bag 기록 시각으로 자동 계산합니다. `--fps 30`으로 직접 지정할 수 있습니다.
+`--output-video`를 생략하면 bag 옆에 `<bag이름>.mp4`를 생성합니다.
+
 ## video2img
 ```bash
 ros2 run bag2img video2img \

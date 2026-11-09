@@ -1,9 +1,10 @@
 # bag2img
 
-다음 세 개의 ROS 2 실행 파일을 제공합니다.
+다음 네 개의 ROS 2 실행 파일을 제공합니다.
 
 - `bag2img`: ROS 2 bag의 `sensor_msgs/msg/Image` 또는
   `sensor_msgs/msg/CompressedImage` 토픽을 일정 주기로 저장
+- `bag2video`: ROS 2 bag의 이미지 토픽을 동영상으로 저장
 - `video2img`: MP4, AVI 등 OpenCV가 읽을 수 있는 동영상을 일정 주기로 저장
 - `video2bag`: 동영상의 모든 프레임을 ROS 2 bag의
   원본 및 JPEG 압축 이미지 토픽으로 저장
@@ -30,6 +31,30 @@ ros2 run bag2img bag2img \
 ```
 
 `--bag`에는 rosbag2 디렉터리 또는 그 안의 `.db3` 파일을 지정할 수 있습니다.
+
+## ROS 2 bag을 동영상으로 변환
+
+```bash
+ros2 run bag2img bag2video \
+  --bag ~/bags/input_bag \
+  --topic /camera/image_raw/compressed \
+  --output-video ~/Videos/output.mp4
+```
+
+원본 `Image`와 `CompressedImage`를 모두 지원합니다. 이미지 토픽이 하나면
+`--topic`을 생략할 수 있습니다. `--output-video`(별칭 `--video`)를 생략하면
+bag 옆에 `<bag이름>.mp4`를 생성하며 기존 파일은 덮어쓰지 않습니다.
+
+모든 메시지를 한 프레임씩 기록합니다. 기본 FPS는 bag 기록 타임스탬프의
+평균 주기로 계산하며, 프레임이 하나면 30 FPS를 사용합니다. `--fps 30`으로
+직접 지정할 수 있습니다. 출력은 고정 FPS이므로 불규칙한 프레임 간격은
+평균 간격으로 바뀝니다. `--codec`으로 FourCC를 지정할 수 있으며 기본값은
+MP4용 `mp4v`입니다. `--storage-id`는 기본적으로 자동 감지합니다.
+
+흑백 이미지는 BGR로 변환하고 알파 채널은 제거합니다. 16비트 이미지는
+256으로 나눠 8비트로 변환합니다. 홀수 크기 영상은 오른쪽/아래쪽에 검은
+픽셀을 추가해 짝수 크기로 저장하며, 도중에 이미지 크기가 바뀌면 오류를
+반환합니다.
 
 ## 동영상 변환
 

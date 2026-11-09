@@ -20,6 +20,7 @@ setup(
     entry_points={
         "console_scripts": [
             "bag2img = bag2img.bag_exporter:main",
+            "bag2video = bag2img.bag_to_video:main",
             "video2img = bag2img.video_exporter:main",
             "video2bag = bag2img.video_to_bag:main",
         ],
